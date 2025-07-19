@@ -1111,6 +1111,7 @@ function handleTilt(event) {
     }
 }
 function handleTouchStart(e) {
+    if (fireButtonPressed) return;
     if (e.touches.length > 0) {
         let x = e.touches[0].clientX;
         if (x < window.innerWidth / 2) {
@@ -1121,6 +1122,7 @@ function handleTouchStart(e) {
     }
 }
 function handleTouchEnd(e) {
+    if (fireButtonPressed) return;
     keys.left = false; keys.right = false;
 }
 
@@ -1186,7 +1188,13 @@ updatePlayerLevel = function() {
     }
 };
 // Исправляю: кнопка FIRE не вызывает движение при касании
-function mobileShoot() {
+let fireButtonPressed = false;
+function mobileShoot(e) {
+    fireButtonPressed = true;
     keys.space = true;
-    setTimeout(() => { keys.space = false; }, 100);
+    setTimeout(() => {
+        keys.space = false;
+        fireButtonPressed = false;
+    }, 100);
+    if (e) e.stopPropagation();
 }
