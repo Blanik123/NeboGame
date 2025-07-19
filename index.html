@@ -154,15 +154,15 @@
              position: fixed;
              top: 20px;
              left: 20px;
-             width: 40px;
-             height: 40px;
-             cursor: pointer;
+             width: 48px;
+             height: 48px;
+             background: rgba(255,255,255,0.95);
+             border-radius: 12px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
              z-index: 1000;
-             background: rgba(255, 255, 255, 0.9);
-             border-radius: 8px;
-             padding: 8px;
              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-             transition: all 0.3s ease;
          }
          
          .menu-button:hover {
@@ -184,18 +184,17 @@
              position: fixed;
              top: 70px;
              left: 20px;
-             background: rgba(255, 255, 255, 0.95);
+             width: 220px;
+             height: 220px;
+             background: rgba(255,255,255,0.98);
              border-radius: 20px;
              box-shadow: 0 8px 16px rgba(0,0,0,0.3);
              display: none;
              z-index: 999;
-             width: 200px;
-             height: 200px;
-             min-width: unset;
-             min-height: unset;
              border: 2px solid #4CAF50;
              text-align: center;
              padding-top: 20px;
+             overflow: auto;
          }
          
          .menu-item {
@@ -429,9 +428,60 @@
             <span></span>
         </div>
     </div>
+    <style>
+    .menu-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 48px;
+        height: 48px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .menu-burger {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        margin: auto;
+    }
+    .menu-burger span {
+        display: block;
+        width: 24px;
+        height: 3px;
+        background: #333;
+        border-radius: 2px;
+        transition: 0.3s;
+    }
+    .dropdown-menu {
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        width: 220px;
+        height: 220px;
+        background: rgba(255,255,255,0.98);
+        border-radius: 20px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        display: none;
+        z-index: 999;
+        border: 2px solid #4CAF50;
+        text-align: center;
+        padding-top: 20px;
+        overflow: auto;
+    }
+    </style>
 
     <!-- Выпадающее меню -->
     <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item" onclick="showSettings()">⚙️ Настройки</div>
         <div class="menu-item" onclick="showRules()">📖 Правила игры</div>
         <div class="menu-item" onclick="showInventory()">🎒 Инвентарь</div>
         <div class="menu-item" onclick="showLeaderboard()">🏆 Лидерборд</div>
@@ -456,28 +506,39 @@
             <h2>📖 Правила игры</h2>
             <div class="rules-content">
                 <h3>🎮 Управление:</h3>
-                <p><strong>A/D</strong> или <strong>← →</strong> - движение влево/вправо</p>
-                <p><strong>ПРОБЕЛ</strong> - стрельба</p>
-                
+                <p><strong>A/D</strong> или <strong>← →</strong> — движение влево/вправо</p>
+                <p><strong>ПРОБЕЛ</strong> или <strong>↑</strong> — стрельба</p>
+                <p>На мобильных: выберите тип управления в настройках (тап по экрану или наклон устройства).</p>
                 <h3>🎯 Цель игры:</h3>
-                <p>Уничтожайте грозовые облака и избегайте препятствий!</p>
-                
+                <p>Уничтожайте грозовые облака, избегайте обычных облаков и собирайте звёздочки!</p>
                 <h3>⚡ Система очков:</h3>
                 <p>🌩️ <strong>Грозовые облака (тёмные):</strong></p>
                 <ul>
                     <li>Столкновение = Game Over</li>
                     <li>Уклонение = +1 очко</li>
-                    <li>Уничтожение и сбор звёздочки = +15 очков</li>
+                    <li>Уничтожение = +15 очков</li>
                 </ul>
-                
+                <p>⭐ <strong>Звёздочки:</strong></p>
+                <ul>
+                    <li>1 уровень — +2 очка</li>
+                    <li>2 уровень — +3 очка</li>
+                    <li>3 уровень — +4 очка</li>
+                    <li>4–6 уровень — +5 очков</li>
+                    <li>7–9 уровень — +6 очков</li>
+                    <li>10+ уровень — +10 очков</li>
+                </ul>
                 <p>☁️ <strong>Обычные облака (светлые):</strong></p>
                 <ul>
-                    <li>Столкновение = -5 очков урона</li>
+                    <li>До 4 уровня — штрафа нет</li>
+                    <li>4–6 уровень — вычет −5 очков</li>
+                    <li>7–9 уровень — вычет −10 очков</li>
+                    <li>10–12 уровень — вычет −15 очков</li>
+                    <li>13–15 уровень — вычет −20 очков</li>
+                    <li>и далее каждые 3 уровня — ещё минус 5 очков</li>
                     <li>Нельзя уничтожить пулями</li>
                 </ul>
-                
                 <h3>🏆 Прогресс:</h3>
-                <p>Очки накапливаются между играми в общий счёт!</p>
+                <p>Очки накапливаются между играми в общий счёт! Улучшайте самолёт и открывайте новые модели.</p>
             </div>
             <button class="start-button" onclick="startGame()">🚀 Начать игру!</button>
         </div>
@@ -584,13 +645,13 @@
             <h2>⚙️ Настройки управления</h2>
             <form id="settingsForm">
                 <label>Влево:
-                    <input type="text" id="keyLeft" maxlength="20" readonly value="A / ←">
+                    <input type="text" id="keyLeft" maxlength="20" readonly>
                 </label><br><br>
                 <label>Вправо:
-                    <input type="text" id="keyRight" maxlength="20" readonly value="D / →">
+                    <input type="text" id="keyRight" maxlength="20" readonly>
                 </label><br><br>
                 <label>Стрельба:
-                    <input type="text" id="keyShoot" maxlength="20" readonly value="Пробел / ↑">
+                    <input type="text" id="keyShoot" maxlength="20" readonly>
                 </label><br><br>
                 <button type="button" onclick="saveSettings()">Сохранить</button>
             </form>
@@ -616,7 +677,7 @@
             Счёт за игру: <span id="score">0</span>
         </div>
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div class="controls">
+        <div class="controls" id="controlsBlock">
             <p>Управление: A/D или ← → стрелки для движения, ПРОБЕЛ для стрельбы</p>
             <p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки! (+15 очков)</p>
             <p>⚡ Уклонение от грозы: +1 очко</p>
@@ -633,5 +694,11 @@
     </div>
     
     <script src="game.js"></script>
+    <script>
+    // Скрываем описание управления на мобильных
+    if (/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)) {
+        document.getElementById('controlsBlock').innerHTML = '<p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки!</p><p>⚡ Уклонение от грозы: +1 очко</p><p>☁️ Избегайте светлых облаков! (-5 очков урона)</p><p>📊 Очки накапливаются между играми!</p>';
+    }
+    </script>
 </body>
 </html>

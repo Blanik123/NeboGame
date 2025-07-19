@@ -639,15 +639,18 @@ function update() {
     // Обновление обычных облаков
     for (let i = normalClouds.length - 1; i >= 0; i--) {
         normalClouds[i].y += normalClouds[i].speed;
-        
         // Проверка столкновения с самолётом (урон)
         if (checkCollision(plane, normalClouds[i])) {
-            score -= getCloudPenalty();
+            // С 4 уровня: 4-6 -5, 7-9 -10, 10-12 -15 и т.д.
+            let penalty = 0;
+            if (playerLevel >= 4) {
+                penalty = -5 * Math.ceil((playerLevel - 1) / 3);
+            }
+            score += penalty;
             if (score < 0) score = 0;
             normalClouds.splice(i, 1);
             continue;
         }
-        
         // Удаление облаков за пределами экрана
         if (normalClouds[i].y > canvas.height) {
             normalClouds.splice(i, 1);
@@ -658,17 +661,17 @@ function update() {
     for (let i = stars.length - 1; i >= 0; i--) {
         // Движение звёздочки вниз
         stars[i].y += stars[i].speed;
-        
         // Проверка сбора звёздочки
         if (checkCollision(plane, stars[i]) && !stars[i].collected) {
             stars[i].collected = true;
-            
             // Очки за звёздочку зависят от уровня
-            let starPoints = 1; // По умолчанию 1 очко
-            if (playerLevel >= 10) starPoints = 10;
-            else if (playerLevel >= 5) starPoints = 5;
-            else starPoints = Math.min(playerLevel, 5);
-            
+            let starPoints = 1;
+            if (playerLevel === 1) starPoints = 2;
+            else if (playerLevel === 2) starPoints = 3;
+            else if (playerLevel === 3) starPoints = 4;
+            else if (playerLevel >= 4 && playerLevel <= 6) starPoints = 5;
+            else if (playerLevel >= 7 && playerLevel <= 9) starPoints = 6;
+            else if (playerLevel >= 10) starPoints = 10;
             score += starPoints;
             stars.splice(i, 1);
         }
@@ -1082,4 +1085,21 @@ function handleTouchStart(e) {
 }
 function handleTouchEnd(e) {
     keys.left = false; keys.right = false;
+}
+
+function showSettings() {
+    document.getElementById('dropdownMenu').style.display = 'none';
+    document.getElementById('settingsModal').style.display = 'block';
+    // Заполнить поля текущими значениями биндов и типа управления
+    if (typeof keyBindings !== 'undefined') {
+        document.getElementById('keyLeft').value = keyBindings.left.map(codeToHuman).join(' / ');
+        document.getElementById('keyRight').value = keyBindings.right.map(codeToHuman).join(' / ');
+        document.getElementById('keyShoot').value = keyBindings.shoot.map(codeToHuman).join(' / ');
+    }
+    // Для мобильных — выставить radio
+    if (typeof mobileControlType !== 'undefined') {
+        document.querySelectorAll('input[name=\"mobileControl\"]').forEach(radio => {
+            radio.checked = (radio.value === mobileControlType);
+        });
+    }
 }
