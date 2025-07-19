@@ -1026,3 +1026,60 @@ if (firstLaunch) {
 
 // Запуск игры
 gameLoop();
+
+let isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+let mobileControlType = localStorage.getItem('mobileControlType') || 'touch';
+
+// Показываем выбор только на мобильных
+window.addEventListener('DOMContentLoaded', function() {
+    if (isMobile && document.getElementById('mobileControlBlock')) {
+        document.getElementById('mobileControlBlock').style.display = '';
+        // Устанавливаем выбранный radio
+        document.querySelectorAll('input[name="mobileControl"]').forEach(radio => {
+            radio.checked = (radio.value === mobileControlType);
+            radio.onchange = function() {
+                mobileControlType = this.value;
+                localStorage.setItem('mobileControlType', mobileControlType);
+                setupMobileControls();
+            };
+        });
+        setupMobileControls();
+    }
+});
+
+function setupMobileControls() {
+    // Сначала удаляем все обработчики
+    window.removeEventListener('deviceorientation', handleTilt);
+    document.removeEventListener('touchstart', handleTouchStart);
+    document.removeEventListener('touchend', handleTouchEnd);
+
+    if (mobileControlType === 'tilt') {
+        window.addEventListener('deviceorientation', handleTilt);
+    } else {
+        document.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchend', handleTouchEnd);
+    }
+}
+
+function handleTilt(event) {
+    if (event.gamma < -10) {
+        keys.left = true; keys.right = false;
+    } else if (event.gamma > 10) {
+        keys.right = true; keys.left = false;
+    } else {
+        keys.left = false; keys.right = false;
+    }
+}
+function handleTouchStart(e) {
+    if (e.touches.length > 0) {
+        let x = e.touches[0].clientX;
+        if (x < window.innerWidth / 2) {
+            keys.left = true; keys.right = false;
+        } else {
+            keys.right = true; keys.left = false;
+        }
+    }
+}
+function handleTouchEnd(e) {
+    keys.left = false; keys.right = false;
+}

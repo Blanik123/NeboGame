@@ -577,6 +577,35 @@
         </div>
     </div>
 
+    <!-- Модальное окно настроек -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+            <h2>⚙️ Настройки управления</h2>
+            <form id="settingsForm">
+                <label>Влево:
+                    <input type="text" id="keyLeft" maxlength="20" readonly value="A / ←">
+                </label><br><br>
+                <label>Вправо:
+                    <input type="text" id="keyRight" maxlength="20" readonly value="D / →">
+                </label><br><br>
+                <label>Стрельба:
+                    <input type="text" id="keyShoot" maxlength="20" readonly value="Пробел / ↑">
+                </label><br><br>
+                <button type="button" onclick="saveSettings()">Сохранить</button>
+            </form>
+            <div id="mobileControlBlock" style="display:none; margin-top:20px;">
+                <label><strong>Тип управления на мобильном:</strong></label><br>
+                <label>
+                    <input type="radio" name="mobileControl" value="touch" checked> Тап по экрану
+                </label><br>
+                <label>
+                    <input type="radio" name="mobileControl" value="tilt"> Наклон устройства
+                </label>
+            </div>
+            <p style="font-size:12px;color:#888;">Нажмите на поле и затем нужную клавишу для переназначения.</p>
+        </div>
+    </div>
 
 
     <!-- Уведомления -->
