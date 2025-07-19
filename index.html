@@ -147,276 +147,315 @@
                          .total-score-value {
                  font-size: 28px;
              }
-         }
-         
-         /* Меню стили */
-         .menu-button {
-             position: fixed;
-             top: 20px;
-             left: 20px;
-             width: 48px;
-             height: 48px;
-             background: rgba(255,255,255,0.95);
-             border-radius: 12px;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             z-index: 1000;
-             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-         }
-         
-         .menu-button:hover {
-             background: rgba(255, 255, 255, 1);
-             transform: scale(1.1);
-         }
-         
-         .menu-square {
-             width: 16px;
-             height: 16px;
-             background: #333;
-             margin: auto;
-             border-radius: 3px;
-             transition: 0.3s;
-             display: block;
-         }
-         
-         .dropdown-menu {
-             position: fixed;
-             top: 70px;
-             left: 20px;
-             width: 220px;
-             height: 220px;
-             background: rgba(255,255,255,0.98);
-             border-radius: 20px;
-             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-             display: none;
-             z-index: 999;
-             border: 2px solid #4CAF50;
-             text-align: center;
-             padding-top: 20px;
-             overflow: auto;
-         }
-         
-         .menu-item {
-             padding: 15px 20px;
-             cursor: pointer;
-             border-bottom: 1px solid #eee;
-             transition: background 0.3s;
-             font-weight: 500;
-         }
-         
-         .menu-item:hover {
-             background: #f0f8f0;
-         }
-         
-         .menu-item:last-child {
-             border-bottom: none;
-         }
-         
-         /* Модальные окна */
-         .modal {
-             display: none;
-             position: fixed;
-             z-index: 1001;
-             left: 0;
-             top: 0;
-             width: 100%;
-             height: 100%;
-             background-color: rgba(0,0,0,0.5);
-             backdrop-filter: blur(5px);
-         }
-         
-         .modal-content {
-             background-color: #fefefe;
-             margin: 5% auto;
-             padding: 30px;
-             border-radius: 15px;
-             width: 80%;
-             max-width: 600px;
-             max-height: 80vh;
-             overflow-y: auto;
-             position: relative;
-             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-         }
-         
-         .close {
-             color: #aaa;
-             float: right;
-             font-size: 28px;
-             font-weight: bold;
-             cursor: pointer;
-             position: absolute;
-             right: 20px;
-             top: 15px;
-         }
-         
-         .close:hover {
-             color: #000;
-         }
-         
-         .rules-content h3 {
-             color: #2E7D32;
-             margin-top: 20px;
-         }
-         
-         .rules-content ul {
-             margin-left: 20px;
-         }
-         
-         .start-button {
-             background: linear-gradient(45deg, #4CAF50, #45a049);
-             color: white;
-             border: none;
-             padding: 15px 30px;
-             border-radius: 10px;
-             cursor: pointer;
-             font-size: 18px;
-             font-weight: bold;
-             margin-top: 20px;
-             width: 100%;
-             transition: transform 0.3s;
-         }
-         
-         .start-button:hover {
-             transform: scale(1.05);
-         }
-         
-         .shop-items {
-             display: grid;
-             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-             gap: 15px;
-             margin: 20px 0;
-         }
-         
-         .shop-item {
-             background: #f8f8f8;
-             padding: 20px;
-             border-radius: 10px;
-             text-align: center;
-             border: 2px solid #ddd;
-         }
-         
-         .shop-item h3 {
-             margin-top: 0;
-             color: #2E7D32;
-         }
-         
-         .shop-item button, .upgrade-item button {
-             background: #4CAF50;
-             color: white;
-             border: none;
-             padding: 10px 20px;
-             border-radius: 5px;
-             cursor: pointer;
-             transition: background 0.3s;
-         }
-         
-         .shop-item button:hover, .upgrade-item button:hover {
-             background: #45a049;
-         }
-         
-         .upgrade-section {
-             margin-top: 20px;
-             border-top: 2px solid #eee;
-             padding-top: 20px;
-         }
-         
-         .upgrade-item {
-             background: #f0f8f0;
-             padding: 15px;
-             border-radius: 8px;
-             margin: 10px 0;
-             border: 2px solid #4CAF50;
-         }
-         
-         .upgrade-item h4 {
-             margin-top: 0;
-             color: #2E7D32;
-         }
-         
-         .planes-grid {
-             display: grid;
-             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-             gap: 15px;
-             margin: 20px 0;
-         }
-         
-         .plane-card {
-             background: #f8f8f8;
-             padding: 20px;
-             border-radius: 10px;
-             text-align: center;
-             border: 2px solid #ddd;
-             transition: all 0.3s;
-         }
-         
-         .plane-card.owned {
-             border-color: #4CAF50;
-             background: #f0f8f0;
-         }
-         
-         .plane-card.selected {
-             border-color: #2196F3;
-             background: #e3f2fd;
-         }
-         
-         .plane-card h4 {
-             margin-top: 0;
-             color: #2E7D32;
-         }
-         
-         /* Стили для вкладок */
-         .inventory-tabs {
-             display: flex;
-             border-bottom: 2px solid #eee;
-             margin-bottom: 20px;
-         }
-         
-         .tab-button {
-             flex: 1;
-             padding: 12px;
-             border: none;
-             background: #f5f5f5;
-             cursor: pointer;
-             transition: all 0.3s;
-             font-size: 16px;
-             font-weight: 500;
-         }
-         
-         .tab-button.active {
-             background: #4CAF50;
-             color: white;
-         }
-         
-         .tab-button:hover:not(.active) {
-             background: #e8e8e8;
-         }
-         
-         .tab-content {
-             animation: fadeIn 0.3s ease-in;
-         }
-         
-         @keyframes fadeIn {
-             from { opacity: 0; }
-             to { opacity: 1; }
-         }
-         
-         .telegram-info {
-             margin-top: 30px;
-             padding: 20px;
-             background: #e3f2fd;
-             border-radius: 10px;
-             border-left: 4px solid #2196F3;
-         }
-         
-         .telegram-info h3 {
-             margin-top: 0;
-             color: #1976D2;
-         }
-         
-         .telegram-info ol {
-             margin: 0;
-         }
+        }
+        
+        /* Меню стили */
+        .menu-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .menu-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+        
+        .menu-square {
+            width: 16px;
+            height: 16px;
+            background: #333;
+            margin: auto;
+            border-radius: 3px;
+            transition: 0.3s;
+            display: block;
+        }
+        
+        .dropdown-menu {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            width: 220px;
+            height: 220px;
+            background: rgba(255,255,255,0.98);
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
+            border: 2px solid #4CAF50;
+            text-align: center;
+            padding-top: 20px;
+            overflow: auto;
+        }
+        
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        
+        .menu-item:hover {
+            background: #f0f8f0;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .rules-content h3 {
+            color: #2E7D32;
+            margin-top: 20px;
+        }
+        
+        .rules-content ul {
+            margin-left: 20px;
+        }
+        
+        .start-button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+        
+        .start-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .shop-item {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #ddd;
+        }
+        
+        .shop-item h3 {
+            margin-top: 0;
+            color: #2E7D32;
+        }
+        
+        .shop-item button, .upgrade-item button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .shop-item button:hover, .upgrade-item button:hover {
+            background: #45a049;
+        }
+        
+        .upgrade-section {
+            margin-top: 20px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .upgrade-item {
+            background: #f0f8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #4CAF50;
+        }
+        
+        .upgrade-item h4 {
+            margin-top: 0;
+            color: #2E7D32;
+        }
+        
+        .planes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .plane-card {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .plane-card.owned {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+        
+        .plane-card.selected {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+        
+        .plane-card h4 {
+            margin-top: 0;
+            color: #2E7D32;
+        }
+        
+        /* Стили для вкладок */
+        .inventory-tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 500;
+            color: #111;
+        }
+        
+        .tab-button.active {
+            background: #4CAF50;
+            color: #fff;
+        }
+        
+        .tab-button:hover:not(.active) {
+            background: #e8e8e8;
+            color: #111;
+        }
+        
+        .tab-content {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .telegram-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .telegram-info h3 {
+            margin-top: 0;
+            color: #1976D2;
+        }
+        
+        .telegram-info ol {
+            margin: 0;
+        }
+        @media (max-width: 900px) {
+            .game-container {
+                width: 98vw;
+                min-width: unset;
+                max-width: unset;
+                padding: 5px;
+            }
+            canvas {
+                width: 98vw !important;
+                height: 60vh !important;
+                min-width: unset;
+                max-width: unset;
+            }
+            .controls {
+                font-size: 14px;
+            }
+            .shoot-btn-mobile {
+                display: block;
+            }
+        }
+        .shoot-btn-mobile {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 2000;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #4CAF50;
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0.85;
+        }
     </style>
 </head>
 <body>
@@ -698,6 +737,19 @@
     // Скрываем описание управления на мобильных
     if (/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)) {
         document.getElementById('controlsBlock').innerHTML = '<p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки!</p><p>⚡ Уклонение от грозы: +1 очко</p><p>☁️ Избегайте светлых облаков! (-5 очков урона)</p><p>📊 Очки накапливаются между играми!</p>';
+    }
+    </script>
+    <button class="shoot-btn-mobile" id="shootBtnMobile" onclick="mobileShoot()">Стрелять</button>
+    <script>
+    // Скрываем меню бинда клавиш на мобильных
+    if (/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)) {
+        document.getElementById('settingsForm').style.display = 'none';
+        document.getElementById('mobileControlBlock').style.display = '';
+        document.getElementById('shootBtnMobile').style.display = 'block';
+    }
+    function mobileShoot() {
+        keys.space = true;
+        setTimeout(() => { keys.space = false; }, 100);
     }
     </script>
 </body>

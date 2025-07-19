@@ -1050,6 +1050,41 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+if (isMobile) {
+    // Уменьшаем скорость самолёта
+    plane.speed = Math.max(2, plane.speed * 0.7);
+    // Уменьшаем скорость облаков, пуль и звёзд при их создании
+    const origCreateCloud = createCloud;
+    createCloud = function() {
+        origCreateCloud();
+        clouds[clouds.length-1].speed = Math.max(1, clouds[clouds.length-1].speed * 0.7);
+    };
+    const origCreateNormalCloud = createNormalCloud;
+    createNormalCloud = function() {
+        origCreateNormalCloud();
+        normalClouds[normalClouds.length-1].speed = Math.max(1, normalClouds[normalClouds.length-1].speed * 0.7);
+    };
+    const origCreateBullet = createBullet;
+    createBullet = function() {
+        origCreateBullet();
+        bullets[bullets.length-1].speed = Math.max(5, bullets[bullets.length-1].speed * 0.7);
+    };
+    const origCreateStar = createStar;
+    createStar = function(x, y) {
+        origCreateStar(x, y);
+        stars[stars.length-1].speed = Math.max(1, stars[stars.length-1].speed * 0.7);
+    };
+}
+// Стрельба по ЛКМ для компьютеров
+if (!isMobile) {
+    canvas.addEventListener('mousedown', function(e) {
+        if (e.button === 0) {
+            keys.space = true;
+            setTimeout(() => { keys.space = false; }, 100);
+        }
+    });
+}
+
 function setupMobileControls() {
     // Сначала удаляем все обработчики
     window.removeEventListener('deviceorientation', handleTilt);
