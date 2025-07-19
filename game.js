@@ -605,8 +605,7 @@ function update() {
                 // Удаляем облако и пулю
                 clouds.splice(j, 1);
                 bullets.splice(i, 1);
-                // Пропорциональное начисление очков за уничтожение грозы
-                score += 15;
+                // score += 15; // удалено, очки только за звезду
                 hit = true;
                 break;
             }
@@ -891,7 +890,10 @@ function updateHangarDisplay2() {
         planesGrid.appendChild(card);
     });
     
-    document.getElementById('currentPlaneText2').textContent = planes[currentPlane].name;
+    // После updateHangarDisplay2() или при инициализации интерфейса
+    if (document.getElementById('currentPlaneText2')) {
+        document.getElementById('currentPlaneText2').textContent = planes[currentPlane].name;
+    }
 }
 
 function buyPlane2(index) {
@@ -1137,4 +1139,54 @@ function showSettings() {
             radio.checked = (radio.value === mobileControlType);
         });
     }
+}
+
+// Функция показа/скрытия панели уровня для мобильных
+function showMobileLevelBox(show) {
+    const box = document.getElementById('levelMobileBox');
+    if (!box) return;
+    if (show) {
+        box.textContent = playerLevel;
+        box.style.display = 'flex';
+    } else {
+        box.style.display = 'none';
+    }
+}
+// Модифицируем startGame и gameOver
+const origStartGame = startGame;
+startGame = function() {
+    origStartGame();
+    if (isMobile) {
+        showMobileLevelBox(true);
+        document.querySelector('.total-score-container').style.display = 'none';
+    }
+};
+const origGameOver = gameOver;
+gameOver = function() {
+    origGameOver();
+    if (isMobile) {
+        showMobileLevelBox(false);
+        document.querySelector('.total-score-container').style.display = '';
+    }
+};
+// При достижении нового уровня обновлять levelMobileBox и уведомлять игрока
+const origUpdatePlayerLevel = updatePlayerLevel;
+updatePlayerLevel = function() {
+    const prevLevel = playerLevel;
+    origUpdatePlayerLevel();
+    if (isMobile) {
+        const box = document.getElementById('levelMobileBox');
+        if (box) box.textContent = playerLevel;
+        // Уведомление только по окончании игры (gameOver)
+    } else {
+        // На ПК уведомлять сразу (в моменте)
+        if (playerLevel > prevLevel) {
+            showNotification(`🎉 Новый уровень: ${playerLevel}!`);
+        }
+    }
+};
+// Исправляю: кнопка FIRE не вызывает движение при касании
+function mobileShoot() {
+    keys.space = true;
+    setTimeout(() => { keys.space = false; }, 100);
 }

@@ -456,6 +456,33 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             opacity: 0.85;
         }
+        .level-mobile-box {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 22px;
+            font-weight: bold;
+            color: #2E7D32;
+            border: 2px solid #4CAF50;
+        }
+        @media (max-width: 900px) {
+            .level-mobile-box { display: flex; }
+            .total-score-container { display: none !important; }
+        }
+        .shoot-btn-mobile {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
@@ -718,9 +745,9 @@
         <canvas id="gameCanvas" width="800" height="600"></canvas>
         <div class="controls" id="controlsBlock">
             <p>Управление: A/D или ← → стрелки для движения, ПРОБЕЛ для стрельбы</p>
-            <p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки! (+15 очков)</p>
+            <p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки!</p>
             <p>⚡ Уклонение от грозы: +1 очко</p>
-            <p>☁️ Избегайте светлых облаков! (-5 очков урона)</p>
+            <p>☁️ Избегайте светлых облаков!</p>
             <p>📊 Очки накапливаются между играми!</p>
         </div>
         
@@ -736,10 +763,10 @@
     <script>
     // Скрываем описание управления на мобильных
     if (/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)) {
-        document.getElementById('controlsBlock').innerHTML = '<p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки!</p><p>⚡ Уклонение от грозы: +1 очко</p><p>☁️ Избегайте светлых облаков! (-5 очков урона)</p><p>📊 Очки накапливаются между играми!</p>';
+        document.getElementById('controlsBlock').innerHTML = '<p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки!</p><p>⚡ Уклонение от грозы: +1 очко</p><p>☁️ Избегайте светлых облаков!</p><p>📊 Очки накапливаются между играми!</p>';
     }
     </script>
-    <button class="shoot-btn-mobile" id="shootBtnMobile" onclick="mobileShoot()">Стрелять</button>
+    <button class="shoot-btn-mobile" id="shootBtnMobile" onclick="mobileShoot()">FIRE</button>
     <script>
     // Скрываем меню бинда клавиш на мобильных
     if (/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)) {
