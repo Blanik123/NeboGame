@@ -85,30 +85,6 @@ const keys = {
 let lastShotTime = 0;
 const baseShotCooldown = 250; // миллисекунды (медленнее на 1 уровне)
 
-// Клавиши управления (по умолчанию)
-let keyBindings = {
-    left: ['KeyA', 'ArrowLeft'],
-    right: ['KeyD', 'ArrowRight'],
-    shoot: ['Space', 'ArrowUp']
-};
-
-// Загружаем бинды из localStorage
-function loadKeyBindings() {
-    const saved = localStorage.getItem('planeGameKeyBindings');
-    if (saved) {
-        try {
-            const parsed = JSON.parse(saved);
-            if (parsed.left && parsed.right && parsed.shoot) {
-                keyBindings = parsed;
-            }
-        } catch {}
-    }
-}
-function saveKeyBindings() {
-    localStorage.setItem('planeGameKeyBindings', JSON.stringify(keyBindings));
-}
-loadKeyBindings();
-
 // Функции для работы с общим счётом
 function loadTotalScore() {
     const saved = localStorage.getItem('planeGameTotalScore');
@@ -207,70 +183,40 @@ function saveGameData() {
 }
 
 // Обработка нажатий клавиш
-// keys: {left, right, space}
 document.addEventListener('keydown', (e) => {
-    if (keyBindings.left.includes(e.code)) {
-        keys.left = true;
-        e.preventDefault();
-    }
-    if (keyBindings.right.includes(e.code)) {
-        keys.right = true;
-        e.preventDefault();
-    }
-    if (keyBindings.shoot.includes(e.code)) {
-        keys.space = true;
-        e.preventDefault();
+    switch(e.code) {
+        case 'KeyA':
+        case 'ArrowLeft':
+            keys.left = true;
+            e.preventDefault();
+            break;
+        case 'KeyD':
+        case 'ArrowRight':
+            keys.right = true;
+            e.preventDefault();
+            break;
+        case 'Space':
+            keys.space = true;
+            e.preventDefault();
+            break;
     }
 });
+
 document.addEventListener('keyup', (e) => {
-    if (keyBindings.left.includes(e.code)) keys.left = false;
-    if (keyBindings.right.includes(e.code)) keys.right = false;
-    if (keyBindings.shoot.includes(e.code)) keys.space = false;
-});
-
-// Открытие окна настроек
-function showSettings() {
-    document.getElementById('dropdownMenu').style.display = 'none';
-    document.getElementById('settingsModal').style.display = 'block';
-    // Отобразить текущие бинды
-    document.getElementById('keyLeft').value = keyBindings.left.map(codeToHuman).join(' / ');
-    document.getElementById('keyRight').value = keyBindings.right.map(codeToHuman).join(' / ');
-    document.getElementById('keyShoot').value = keyBindings.shoot.map(codeToHuman).join(' / ');
-}
-
-// Преобразование кода клавиши в человекочитаемый вид
-function codeToHuman(code) {
-    switch(code) {
-        case 'KeyA': return 'A';
-        case 'KeyD': return 'D';
-        case 'ArrowLeft': return '←';
-        case 'ArrowRight': return '→';
-        case 'Space': return 'Пробел';
-        case 'ArrowUp': return '↑';
-        default: return code;
-    }
-}
-
-// Логика переназначения клавиш
-let currentKeyEdit = null;
-document.getElementById('keyLeft').addEventListener('focus', function() { currentKeyEdit = 'left'; this.value = ''; });
-document.getElementById('keyRight').addEventListener('focus', function() { currentKeyEdit = 'right'; this.value = ''; });
-document.getElementById('keyShoot').addEventListener('focus', function() { currentKeyEdit = 'shoot'; this.value = ''; });
-document.addEventListener('keydown', function(e) {
-    if (currentKeyEdit) {
-        keyBindings[currentKeyEdit] = [e.code];
-        document.getElementById('key'+capitalize(currentKeyEdit)).value = codeToHuman(e.code);
-        currentKeyEdit = null;
-        e.preventDefault();
+    switch(e.code) {
+        case 'KeyA':
+        case 'ArrowLeft':
+            keys.left = false;
+            break;
+        case 'KeyD':
+        case 'ArrowRight':
+            keys.right = false;
+            break;
+        case 'Space':
+            keys.space = false;
+            break;
     }
 });
-function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
-
-function saveSettings() {
-    saveKeyBindings();
-    showNotification('Настройки сохранены!');
-    closeModal('settingsModal');
-}
 
 // Функция создания грозового облака
 function createCloud() {
