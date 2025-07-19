@@ -24,31 +24,38 @@ let planeUpgrades = {
 // Данные самолётов
 const planes = [
     {
-        name: "Стартовый истребитель",
-        baseSpeed: 5, // Слабая ракета на 1 уровне
+        name: "Кукурузник",
+        baseSpeed: 2, // Слабая ракета на 1 уровне
         requiredLevel: 1,
         cost: 0,
         owned: true
     },
     {
-        name: "Быстрый перехватчик",
-        baseSpeed: 7,
+        name: "Cessna 172",
+        baseSpeed: 4,
         requiredLevel: 5,
         cost: 100,
         owned: false
     },
     {
-        name: "Штурмовик",
+        name: "ATR-72",
         baseSpeed: 6,
         requiredLevel: 10,
         cost: 250,
         owned: false
     },
     {
-        name: "Сверхзвуковой истребитель",
+        name: "SSJ-100",
         baseSpeed: 9,
         requiredLevel: 15,
         cost: 500,
+        owned: false
+    },
+    {
+        name: "A320",
+        baseSpeed: 11,
+        requiredLevel: 20,
+        cost: 700,
         owned: false
     }
 ];
@@ -588,6 +595,7 @@ function update() {
             continue;
         }
         
+        let hit = false;
         // Проверка столкновения пуль с облаками
         for (let j = clouds.length - 1; j >= 0; j--) {
             if (checkCollision(bullets[i], clouds[j])) {
@@ -597,9 +605,13 @@ function update() {
                 // Удаляем облако и пулю
                 clouds.splice(j, 1);
                 bullets.splice(i, 1);
+                // Пропорциональное начисление очков за уничтожение грозы
+                score += 15;
+                hit = true;
                 break;
             }
         }
+        if (hit) continue;
     }
     
     // Обновление облаков
@@ -630,7 +642,7 @@ function update() {
         
         // Проверка столкновения с самолётом (урон)
         if (checkCollision(plane, normalClouds[i])) {
-            score -= 5;
+            score -= getCloudPenalty();
             if (score < 0) score = 0;
             normalClouds.splice(i, 1);
             continue;

@@ -185,12 +185,17 @@
              top: 70px;
              left: 20px;
              background: rgba(255, 255, 255, 0.95);
-             border-radius: 10px;
+             border-radius: 20px;
              box-shadow: 0 8px 16px rgba(0,0,0,0.3);
              display: none;
              z-index: 999;
-             min-width: 200px;
+             width: 200px;
+             height: 200px;
+             min-width: unset;
+             min-height: unset;
              border: 2px solid #4CAF50;
+             text-align: center;
+             padding-top: 20px;
          }
          
          .menu-item {
@@ -416,9 +421,13 @@
     </style>
 </head>
 <body>
-    <!-- Меню в виде квадратика -->
+    <!-- Меню в виде гамбургера -->
     <div class="menu-button" id="menuButton" onclick="toggleMenu()">
-        <div class="menu-square"></div>
+        <div class="menu-burger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </div>
 
     <!-- Выпадающее меню -->
@@ -435,7 +444,6 @@
     <div class="total-score-container">
         <h3>🏆 Общий счёт</h3>
         <div class="total-score-value" id="totalScore">0</div>
-        <p>очков за все игры</p>
         <div class="level-info">
             <strong>Уровень <span id="playerLevel">1</span></strong>
         </div>
