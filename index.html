@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Самолёт и Грозы</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #87CEEB, #98D8E8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        .game-container {
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        canvas {
+            border: 2px solid #333;
+            border-radius: 5px;
+            background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+        }
+        
+        .controls {
+            margin-top: 10px;
+            color: #333;
+        }
+        
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .total-score-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            text-align: center;
+            min-width: 180px;
+            border: 2px solid #4CAF50;
+        }
+        
+        .total-score-container h3 {
+            margin: 0 0 10px 0;
+            color: #2E7D32;
+            font-size: 18px;
+        }
+        
+        .total-score-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1B5E20;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin: 10px 0;
+            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+                 .total-score-container p {
+             margin: 0;
+             color: #666;
+             font-size: 12px;
+         }
+         
+         .level-info {
+             margin-top: 10px;
+             padding: 5px;
+             background: rgba(76, 175, 80, 0.1);
+             border-radius: 5px;
+             color: #2E7D32;
+         }
+         
+         .notification {
+             position: fixed;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             background: rgba(76, 175, 80, 0.95);
+             color: white;
+             padding: 20px;
+             border-radius: 10px;
+             font-size: 18px;
+             font-weight: bold;
+             z-index: 1002;
+             display: none;
+             text-align: center;
+             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+         }
+        
+        @media (max-width: 900px) {
+            .total-score-container {
+                top: 10px;
+                right: 10px;
+                padding: 15px;
+                min-width: 140px;
+            }
+            
+            .total-score-container h3 {
+                font-size: 16px;
+            }
+            
+                         .total-score-value {
+                 font-size: 28px;
+             }
+         }
+         
+         /* Меню стили */
+         .menu-button {
+             position: fixed;
+             top: 20px;
+             left: 20px;
+             width: 40px;
+             height: 40px;
+             cursor: pointer;
+             z-index: 1000;
+             background: rgba(255, 255, 255, 0.9);
+             border-radius: 8px;
+             padding: 8px;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+             transition: all 0.3s ease;
+         }
+         
+         .menu-button:hover {
+             background: rgba(255, 255, 255, 1);
+             transform: scale(1.1);
+         }
+         
+         .menu-square {
+             width: 16px;
+             height: 16px;
+             background: #333;
+             margin: auto;
+             border-radius: 3px;
+             transition: 0.3s;
+             display: block;
+         }
+         
+         .dropdown-menu {
+             position: fixed;
+             top: 70px;
+             left: 20px;
+             background: rgba(255, 255, 255, 0.95);
+             border-radius: 10px;
+             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+             display: none;
+             z-index: 999;
+             min-width: 200px;
+             border: 2px solid #4CAF50;
+         }
+         
+         .menu-item {
+             padding: 15px 20px;
+             cursor: pointer;
+             border-bottom: 1px solid #eee;
+             transition: background 0.3s;
+             font-weight: 500;
+         }
+         
+         .menu-item:hover {
+             background: #f0f8f0;
+         }
+         
+         .menu-item:last-child {
+             border-bottom: none;
+         }
+         
+         /* Модальные окна */
+         .modal {
+             display: none;
+             position: fixed;
+             z-index: 1001;
+             left: 0;
+             top: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(0,0,0,0.5);
+             backdrop-filter: blur(5px);
+         }
+         
+         .modal-content {
+             background-color: #fefefe;
+             margin: 5% auto;
+             padding: 30px;
+             border-radius: 15px;
+             width: 80%;
+             max-width: 600px;
+             max-height: 80vh;
+             overflow-y: auto;
+             position: relative;
+             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+         }
+         
+         .close {
+             color: #aaa;
+             float: right;
+             font-size: 28px;
+             font-weight: bold;
+             cursor: pointer;
+             position: absolute;
+             right: 20px;
+             top: 15px;
+         }
+         
+         .close:hover {
+             color: #000;
+         }
+         
+         .rules-content h3 {
+             color: #2E7D32;
+             margin-top: 20px;
+         }
+         
+         .rules-content ul {
+             margin-left: 20px;
+         }
+         
+         .start-button {
+             background: linear-gradient(45deg, #4CAF50, #45a049);
+             color: white;
+             border: none;
+             padding: 15px 30px;
+             border-radius: 10px;
+             cursor: pointer;
+             font-size: 18px;
+             font-weight: bold;
+             margin-top: 20px;
+             width: 100%;
+             transition: transform 0.3s;
+         }
+         
+         .start-button:hover {
+             transform: scale(1.05);
+         }
+         
+         .shop-items {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+             gap: 15px;
+             margin: 20px 0;
+         }
+         
+         .shop-item {
+             background: #f8f8f8;
+             padding: 20px;
+             border-radius: 10px;
+             text-align: center;
+             border: 2px solid #ddd;
+         }
+         
+         .shop-item h3 {
+             margin-top: 0;
+             color: #2E7D32;
+         }
+         
+         .shop-item button, .upgrade-item button {
+             background: #4CAF50;
+             color: white;
+             border: none;
+             padding: 10px 20px;
+             border-radius: 5px;
+             cursor: pointer;
+             transition: background 0.3s;
+         }
+         
+         .shop-item button:hover, .upgrade-item button:hover {
+             background: #45a049;
+         }
+         
+         .upgrade-section {
+             margin-top: 20px;
+             border-top: 2px solid #eee;
+             padding-top: 20px;
+         }
+         
+         .upgrade-item {
+             background: #f0f8f0;
+             padding: 15px;
+             border-radius: 8px;
+             margin: 10px 0;
+             border: 2px solid #4CAF50;
+         }
+         
+         .upgrade-item h4 {
+             margin-top: 0;
+             color: #2E7D32;
+         }
+         
+         .planes-grid {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+             gap: 15px;
+             margin: 20px 0;
+         }
+         
+         .plane-card {
+             background: #f8f8f8;
+             padding: 20px;
+             border-radius: 10px;
+             text-align: center;
+             border: 2px solid #ddd;
+             transition: all 0.3s;
+         }
+         
+         .plane-card.owned {
+             border-color: #4CAF50;
+             background: #f0f8f0;
+         }
+         
+         .plane-card.selected {
+             border-color: #2196F3;
+             background: #e3f2fd;
+         }
+         
+         .plane-card h4 {
+             margin-top: 0;
+             color: #2E7D32;
+         }
+         
+         /* Стили для вкладок */
+         .inventory-tabs {
+             display: flex;
+             border-bottom: 2px solid #eee;
+             margin-bottom: 20px;
+         }
+         
+         .tab-button {
+             flex: 1;
+             padding: 12px;
+             border: none;
+             background: #f5f5f5;
+             cursor: pointer;
+             transition: all 0.3s;
+             font-size: 16px;
+             font-weight: 500;
+         }
+         
+         .tab-button.active {
+             background: #4CAF50;
+             color: white;
+         }
+         
+         .tab-button:hover:not(.active) {
+             background: #e8e8e8;
+         }
+         
+         .tab-content {
+             animation: fadeIn 0.3s ease-in;
+         }
+         
+         @keyframes fadeIn {
+             from { opacity: 0; }
+             to { opacity: 1; }
+         }
+         
+         .telegram-info {
+             margin-top: 30px;
+             padding: 20px;
+             background: #e3f2fd;
+             border-radius: 10px;
+             border-left: 4px solid #2196F3;
+         }
+         
+         .telegram-info h3 {
+             margin-top: 0;
+             color: #1976D2;
+         }
+         
+         .telegram-info ol {
+             margin: 0;
+         }
+    </style>
+</head>
+<body>
+    <!-- Меню в виде квадратика -->
+    <div class="menu-button" id="menuButton" onclick="toggleMenu()">
+        <div class="menu-square"></div>
+    </div>
+
+    <!-- Выпадающее меню -->
+    <div class="dropdown-menu" id="dropdownMenu">
+        <div class="menu-item" onclick="showSettings()">⚙️ Настройки</div>
+        <div class="menu-item" onclick="showRules()">📖 Правила игры</div>
+        <div class="menu-item" onclick="showInventory()">🎒 Инвентарь</div>
+        <div class="menu-item" onclick="showLeaderboard()">🏆 Лидерборд</div>
+        <div class="menu-item" onclick="showShop()">💰 Магазин</div>
+        <hr style="margin: 5px 0; border: 1px solid #eee;">
+        <div class="menu-item" onclick="clearProgress()" style="color: #d32f2f;">🗑️ Удалить прогресс</div>
+    </div>
+
+    <!-- Общий счёт вынесен на фон -->
+    <div class="total-score-container">
+        <h3>🏆 Общий счёт</h3>
+        <div class="total-score-value" id="totalScore">0</div>
+        <div class="level-info">
+            <strong>Уровень <span id="playerLevel">1</span></strong>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+            <h2>⚙️ Настройки управления</h2>
+            <form id="settingsForm">
+                <label>Влево:
+                    <input type="text" id="keyLeft" maxlength="20" readonly value="A / ←">
+                </label><br><br>
+                <label>Вправо:
+                    <input type="text" id="keyRight" maxlength="20" readonly value="D / →">
+                </label><br><br>
+                <label>Стрельба:
+                    <input type="text" id="keyShoot" maxlength="20" readonly value="Пробел / ↑">
+                </label><br><br>
+                <button type="button" onclick="saveSettings()">Сохранить</button>
+            </form>
+            <p style="font-size:12px;color:#888;">Нажмите на поле и затем нужную клавишу для переназначения.</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно правил игры -->
+    <div class="modal" id="rulesModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('rulesModal')">&times;</span>
+            <h2>📖 Правила игры</h2>
+            <div class="rules-content">
+                <h3>🎮 Управление:</h3>
+                <p><strong>A/D</strong> или <strong>← →</strong> - движение влево/вправо</p>
+                <p><strong>ПРОБЕЛ</strong> - стрельба</p>
+                
+                <h3>🎯 Цель игры:</h3>
+                <p>Уничтожайте грозовые облака и избегайте препятствий!</p>
+                
+                <h3>⚡ Система очков:</h3>
+                <p>🌩️ <strong>Грозовые облака (тёмные):</strong></p>
+                <ul>
+                    <li>Столкновение = Game Over</li>
+                    <li>Уклонение = +1 очко</li>
+                    <li>Уничтожение и сбор звёздочки = +15 очков</li>
+                </ul>
+                
+                <p>☁️ <strong>Обычные облака (светлые):</strong></p>
+                <ul>
+                    <li>Столкновение = -5 очков урона</li>
+                    <li>Нельзя уничтожить пулями</li>
+                </ul>
+                
+                <h3>🏆 Прогресс:</h3>
+                <p>Очки накапливаются между играми в общий счёт!</p>
+            </div>
+            <button class="start-button" onclick="startGame()">🚀 Начать игру!</button>
+        </div>
+    </div>
+
+    <!-- Инвентарь с вкладками -->
+    <div class="modal" id="inventoryModal">
+        <div class="modal-content inventory-content">
+            <span class="close" onclick="closeModal('inventoryModal')">&times;</span>
+            <h2>🎒 Инвентарь</h2>
+            
+            <!-- Вкладки -->
+            <div class="inventory-tabs">
+                <button class="tab-button active" onclick="switchInventoryTab('hangar')">✈️ Ангар</button>
+                <button class="tab-button" onclick="switchInventoryTab('upgrades')">⬆️ Улучшения</button>
+            </div>
+            
+            <!-- Содержимое вкладок -->
+            <div class="tab-content" id="hangar-tab">
+                <h3>✈️ Ангар самолётов</h3>
+                <p>Текущий самолёт: <strong id="currentPlaneText2">Стартовый истребитель</strong></p>
+                <div class="planes-grid" id="planesGrid2">
+                    <!-- Самолёты будут добавлены через JavaScript -->
+                </div>
+            </div>
+            
+            <div class="tab-content" id="upgrades-tab" style="display: none;">
+                <h3>⬆️ Улучшения</h3>
+                <div class="upgrade-section" id="upgradeSection2">
+                    <div class="upgrade-item">
+                        <h4>🚀 Скорость (+1)</h4>
+                        <p>Стоимость: <span id="speedUpgradeCost2">10</span> очков</p>
+                        <button onclick="upgradeSpeed()">Улучшить</button>
+                    </div>
+                    <div class="upgrade-item">
+                        <h4>⚡ Скорострельность</h4>
+                        <p>Стоимость: <span id="fireRateUpgradeCost2">15</span> очков</p>
+                        <button onclick="upgradeFireRate()">Улучшить</button>
+                    </div>
+                    <div class="upgrade-item">
+                        <h4>🎯 Точность стрельбы</h4>
+                        <p>Стоимость: <span id="accuracyUpgradeCost">20</span> очков</p>
+                        <button onclick="upgradeAccuracy()">Улучшить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="leaderboardModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('leaderboardModal')">&times;</span>
+            <h2>🏆 Лидерборд</h2>
+            <p>Ваш лучший результат: <span id="bestScore">0</span> очков</p>
+            <p><em>Глобальный лидерборд в разработке...</em></p>
+        </div>
+    </div>
+
+    <div class="modal" id="shopModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('shopModal')">&times;</span>
+            <h2>💰 Магазин очков</h2>
+            <p style="text-align: center; color: #666;">Покупки производятся через Telegram бота</p>
+            
+            <div class="shop-items">
+                <div class="shop-item">
+                    <h4>💎 100 очков</h4>
+                    <p>Стоимость: $0.99</p>
+                    <button onclick="buyPointsTelegram(100, 0.99)">Купить в Telegram</button>
+                </div>
+                <div class="shop-item">
+                    <h4>💎 500 очков</h4>
+                    <p>Стоимость: $3.99</p>
+                    <button onclick="buyPointsTelegram(500, 3.99)">Купить в Telegram</button>
+                </div>
+                <div class="shop-item">
+                    <h4>💎 1000 очков</h4>
+                    <p>Стоимость: $6.99</p>
+                    <button onclick="buyPointsTelegram(1000, 6.99)">Купить в Telegram</button>
+                </div>
+                <div class="shop-item">
+                    <h4>💎 2500 очков</h4>
+                    <p>Стоимость: $14.99</p>
+                    <button onclick="buyPointsTelegram(2500, 14.99)">Купить в Telegram</button>
+                </div>
+            </div>
+            
+            <div class="telegram-info">
+                <h3>📱 Как купить через Telegram:</h3>
+                <ol>
+                    <li>Нажмите кнопку "Купить в Telegram"</li>
+                    <li>Вы будете перенаправлены в Telegram бота</li>
+                    <li>Следуйте инструкциям бота для оплаты</li>
+                    <li>Очки автоматически зачислятся в игру</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Уведомления -->
+    <div class="notification" id="notification"></div>
+
+    <div class="game-container">
+        <div class="score">
+            Счёт за игру: <span id="score">0</span>
+        </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="controls">
+            <p>Управление: A/D или ← → стрелки для движения, ПРОБЕЛ для стрельбы</p>
+            <p>🌩️ Уничтожайте тёмные грозы и собирайте звёздочки! (+15 очков)</p>
+            <p>⚡ Уклонение от грозы: +1 очко</p>
+            <p>☁️ Избегайте светлых облаков! (-5 очков урона)</p>
+            <p>📊 Очки накапливаются между играми!</p>
+        </div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>Игра окончена!</h2>
+            <p>Счёт за игру: <span id="finalScore">0</span></p>
+            <p>Общий счёт обновлён! 🏆</p>
+            <button onclick="restartGame()">Играть снова</button>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
