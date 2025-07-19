@@ -1111,7 +1111,8 @@ function handleTilt(event) {
     }
 }
 function handleTouchStart(e) {
-    if (fireButtonPressed) return;
+    // Если нажатие по кнопке FIRE — не двигать самолёт
+    if (fireButtonPressed || (e.target && e.target.classList && e.target.classList.contains('shoot-btn-mobile'))) return;
     if (e.touches.length > 0) {
         let x = e.touches[0].clientX;
         if (x < window.innerWidth / 2) {
@@ -1122,7 +1123,7 @@ function handleTouchStart(e) {
     }
 }
 function handleTouchEnd(e) {
-    if (fireButtonPressed) return;
+    if (fireButtonPressed || (e.target && e.target.classList && e.target.classList.contains('shoot-btn-mobile'))) return;
     keys.left = false; keys.right = false;
 }
 
