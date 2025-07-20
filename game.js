@@ -92,6 +92,184 @@ const keys = {
 let lastShotTime = 0;
 const baseShotCooldown = 250; // миллисекунды (медленнее на 1 уровне)
 
+// === Новые механики ===
+// Щит
+let shieldActive = false;
+let shieldUses = 0;
+let shieldFirstFree = true;
+let shieldWidthMultiplier = 1.8;
+let shieldAvailable = false; // доступен с 7 уровня
+
+// Неуязвимость
+let invincibleActive = false;
+let invincibleTimer = 0;
+let invincibleFirstFree = true;
+let invincibleAvailable = false; // доступна с 5 уровня
+
+// УРВВ (уничтожение ближайшего облака)
+let urvvAvailable = false; // доступно только для некоторых самолётов
+let urvvFirstFree = true;
+
+// Заморозка
+let freezeActive = false;
+let freezeTimer = 0;
+let freezeLevel = 1; // 1-5
+let freezeFirstFree = true;
+
+// Поддержка
+let supportAvailable = true; // доступна всегда
+let supportFirstFree = true;
+
+// Бонусное облако
+let bonusCloudActive = false;
+let bonusCloudTimer = 0;
+let bonusCloudPenalty = 0; // вычитание очков за пропуск (значение уточнить позже)
+let bonusCloudReward = 0; // награда за уничтожение (значение уточнить позже)
+let bonusCloudChance = 0; // вероятность появления (значение уточнить позже)
+
+// === Заготовки функций для новых механик ===
+function activateShield() {
+    if (playerLevel < 7) {
+        showNotification('Щит доступен с 7 уровня!');
+        return;
+    }
+    if (!shieldFirstFree && score < 20) {
+        showNotification('Недостаточно звёзд для активации щита!');
+        return;
+    }
+    if (!shieldActive) {
+        shieldActive = true;
+        shieldUses = 3;
+        if (shieldFirstFree) {
+            shieldFirstFree = false;
+        } else {
+            score -= 20;
+        }
+        showNotification('Щит активирован!');
+        setTimeout(() => { shieldActive = false; }, 5000); // Щит активен 5 сек для визуализации
+    }
+}
+
+function activateInvincibility() {
+    if (playerLevel < 5) {
+        showNotification('Неуязвимость доступна с 5 уровня!');
+        return;
+    }
+    if (!invincibleFirstFree && score < 40) {
+        showNotification('Недостаточно звёзд для активации неуязвимости!');
+        return;
+    }
+    if (!invincibleActive) {
+        invincibleActive = true;
+        invincibleTimer = 20 * 60; // 20 секунд (60 FPS)
+        if (invincibleFirstFree) {
+            invincibleFirstFree = false;
+        } else {
+            score -= 40;
+        }
+        showNotification('Неуязвимость активирована на 20 секунд!');
+    }
+}
+
+function activateURVV() {
+    // TODO: ограничить по типу самолёта
+    if (!urvvFirstFree && score < 30) {
+        showNotification('Недостаточно звёзд для УРВВ!');
+        return;
+    }
+    // Найти ближайшее облако (не бонусное)
+    let allClouds = clouds.concat(normalClouds);
+    let minDist = Infinity;
+    let target = null;
+    for (let c of allClouds) {
+        if (!c.isBonus) {
+            let dx = (c.x + c.width / 2) - (plane.x + plane.width / 2);
+            let dy = (c.y + c.height / 2) - (plane.y + plane.height / 2);
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < minDist) {
+                minDist = dist;
+                target = c;
+            }
+        }
+    }
+    if (target) {
+        if (clouds.includes(target)) clouds.splice(clouds.indexOf(target), 1);
+        if (normalClouds.includes(target)) normalClouds.splice(normalClouds.indexOf(target), 1);
+        showNotification('УРВВ: облако уничтожено!');
+        if (urvvFirstFree) {
+            urvvFirstFree = false;
+        } else {
+            score -= 30;
+        }
+    } else {
+        showNotification('Нет подходящих облаков для УРВВ!');
+    }
+}
+
+function activateFreeze() {
+    let freezeCost = 40;
+    if (!freezeFirstFree && score < freezeCost) {
+        showNotification('Недостаточно звёзд для заморозки!');
+        return;
+    }
+    if (!freezeActive) {
+        freezeActive = true;
+        freezeTimer = 60 * (1 + freezeLevel); // freezeLevel: 1-5, 1-5 сек
+        if (freezeFirstFree) {
+            freezeFirstFree = false;
+        } else {
+            score -= freezeCost;
+        }
+        showNotification(`Игра заморожена на ${1 + freezeLevel} сек!`);
+    }
+}
+
+function activateSupport() {
+    if (!supportFirstFree && score < 50) {
+        showNotification('Недостаточно звёзд для поддержки!');
+        return;
+    }
+    // Удалить все облака кроме бонусных
+    clouds = clouds.filter(c => c.isBonus);
+    normalClouds = normalClouds.filter(c => c.isBonus);
+    showNotification('Поддержка: все облака уничтожены!');
+    if (supportFirstFree) {
+        supportFirstFree = false;
+    } else {
+        score -= 50;
+    }
+}
+
+function spawnBonusCloud() {
+    // Появляется с 2 уровня, шанс появления и награда/штраф задаются позже
+    if (playerLevel < 2) return;
+    if (Math.random() < (bonusCloudChance || 0.05)) { // 5% по умолчанию
+        let cloud = {
+            x: Math.random() * (canvas.width - 60),
+            y: -60,
+            width: 60,
+            height: 40,
+            speed: 2 + Math.random() * 2,
+            isBonus: true
+        };
+        clouds.push(cloud);
+    }
+}
+
+function handleBonusCloudTouch(cloud) {
+    // При касании — заморозка на 2 сек, обратный отсчёт
+    freezeActive = true;
+    freezeTimer = 2 * 60;
+    showNotification('Бонусное облако: заморозка на 2 сек!');
+    // Можно добавить анимацию/эффект
+}
+
+function handleBonusCloudMiss() {
+    // При пропуске — вычитание очков
+    score -= (bonusCloudPenalty || 10);
+    showNotification('Бонусное облако пропущено! Минус очки!');
+}
+
 // Функции для работы с общим счётом
 function loadTotalScore() {
     const saved = localStorage.getItem('planeGameTotalScore');
@@ -707,6 +885,16 @@ function draw() {
     
     // Отрисовка самолёта
     drawPlane();
+    drawShield();
+    // Отрисовка обратного отсчёта заморозки
+    if (freezeActive) {
+        ctx.save();
+        ctx.font = 'bold 48px Arial';
+        ctx.fillStyle = '#FF4500';
+        ctx.textAlign = 'center';
+        ctx.fillText(Math.ceil(freezeTimer / 60), canvas.width / 2, canvas.height / 2);
+        ctx.restore();
+    }
 }
 
 // Функция окончания игры
@@ -1198,4 +1386,148 @@ function mobileShoot(e) {
         fireButtonPressed = false;
     }, 100);
     if (e) e.stopPropagation();
+}
+
+// --- Визуализация новых механик ---
+
+// Визуализация щита
+function drawShield() {
+    if (shieldActive) {
+        ctx.save();
+        ctx.globalAlpha = 0.4;
+        ctx.beginPath();
+        ctx.ellipse(
+            plane.x + plane.width / 2,
+            plane.y + plane.height / 2,
+            (plane.width * shieldWidthMultiplier) / 2,
+            (plane.height * 1.5) / 2,
+            0, 0, 2 * Math.PI
+        );
+        ctx.fillStyle = '#00BFFF';
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+// Визуализация неуязвимости (пример, если нужно)
+function drawInvincibility() {
+    if (invincibleActive) {
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+        ctx.beginPath();
+        ctx.ellipse(
+            plane.x + plane.width / 2,
+            plane.y + plane.height / 2,
+            (plane.width * 1.2) / 2,
+            (plane.height * 1.2) / 2,
+            0, 0, 2 * Math.PI
+        );
+        ctx.fillStyle = '#FFD700';
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+// Визуализация УРВВ (пример, если нужно)
+function drawURVV() {
+    if (urvvAvailable) {
+        ctx.save();
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.ellipse(
+            plane.x + plane.width / 2,
+            plane.y + plane.height / 2,
+            (plane.width * 1.5) / 2,
+            (plane.height * 1.5) / 2,
+            0, 0, 2 * Math.PI
+        );
+        ctx.fillStyle = '#FF4500';
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+// Визуализация заморозки (пример, если нужно)
+function drawFreeze() {
+    if (freezeActive) {
+        ctx.save();
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+        ctx.ellipse(
+            plane.x + plane.width / 2,
+            plane.y + plane.height / 2,
+            (plane.width * 1.8) / 2,
+            (plane.height * 1.8) / 2,
+            0, 0, 2 * Math.PI
+        );
+        ctx.fillStyle = '#00CED1';
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+// Визуализация поддержки (пример, если нужно)
+function drawSupport() {
+    if (supportAvailable) {
+        ctx.save();
+        ctx.globalAlpha = 0.8;
+        ctx.beginPath();
+        ctx.ellipse(
+            plane.x + plane.width / 2,
+            plane.y + plane.height / 2,
+            (plane.width * 2) / 2,
+            (plane.height * 2) / 2,
+            0, 0, 2 * Math.PI
+        );
+        ctx.fillStyle = '#20B2AA';
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+// Визуализация бонусного облака (пример, если нужно)
+function drawBonusCloud(cloud) {
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.ellipse(
+        cloud.x + cloud.width / 2,
+        cloud.y + cloud.height / 2,
+        cloud.width / 2,
+        cloud.height / 2,
+        0, 0, 2 * Math.PI
+    );
+    ctx.fillStyle = '#FFD700';
+    ctx.fill();
+    ctx.restore();
+}
+
+// --- Коллизии с учётом новых механик ---
+
+// Пример для checkCollision (добавить в нужное место):
+// if (shieldActive && cloudIsThunder && shieldUses > 0) {
+//     shieldUses--;
+//     // Удалить грозу
+//     ...
+//     if (shieldUses === 0) shieldActive = false;
+//     continue;
+// }
+// if (invincibleActive) continue;
+// if (cloud.isBonus) { handleBonusCloudTouch(cloud); continue; }
+// ...
+
+// --- Улучшения заморозки ---
+function upgradeFreeze() {
+    if (freezeLevel < 5) {
+        let cost = [0, 70, 90, 120, 200][freezeLevel];
+        if (score >= cost) {
+            score -= cost;
+            freezeLevel++;
+            showNotification(`Заморозка улучшена до ${1 + freezeLevel} сек!`);
+        } else {
+            showNotification('Недостаточно звёзд для улучшения заморозки!');
+        }
+    } else {
+        showNotification('Максимальный уровень заморозки!');
+    }
 }
